@@ -1,0 +1,65 @@
+package contacts 
+
+import "github.com/TelePilot/htmx-contacts/view/layout"
+import "github.com/TelePilot/htmx-contacts/model"
+import "fmt"
+import "reflect"
+import "github.com/labstack/echo/v4"
+
+templ Contact(contact model.Contact) {
+
+    @layout.Base() {
+        if !reflect.DeepEqual(contact, (model.Contact{})){
+            <h1>{contact.First} {contact.Last}</h1>
+
+            <div>
+                <div>Phone: {contact.Phone}</div>
+                <div>Email: {contact.Email}</div>
+            </div>
+
+            <p>
+            <a href={templ.URL(fmt.Sprintf("/contacts/%d/edit", contact.Id))}>Edit</a>
+                <a href="/contacts">Back</a>
+            </p>
+        } else {
+            <h1>Not found!</h1>
+              <p>
+                <a href="/contacts">Back</a>
+            </p>
+        }
+    }
+}
+
+
+templ View(q string, c []model.Contact, cont echo.Context) {
+    @layout.Base() {
+        <form action="/contacts" method="get" class="tool-bar">  
+            <label for="search">Search Term</label>
+            <input autofocus autocomplete="off" id="search" type="search" name="q" value={q}/>
+            <input type="submit" value="Search"/>
+        </form>
+        <table>
+            <thead>
+            <tr>
+                <th>First</th> <th>Last</th> <th>Phone</th> <th>Email</th> <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            for _, con := range c {
+                <tr>
+                    <td>{ con.First }</td>
+                    <td>{ con.Last }</td>
+                    <td>{ con.Phone }</td>
+                    <td>{ con.Email }</td> 
+                    <td><a href={templ.URL(fmt.Sprintf("/contacts/%d/edit", con.Id))}>Edit</a>
+                        <a href={templ.URL(fmt.Sprintf("/contacts/%d", con.Id))}>View</a></td> 
+                </tr>
+        }
+            </tbody>
+        </table>
+        <p>
+         <a href="/contacts/new">Add Contact</a> 
+        </p>
+    }
+   
+}

@@ -1,0 +1,45 @@
+package edit
+
+import "github.com/TelePilot/htmx-contacts/model"
+import "fmt"
+import "github.com/TelePilot/htmx-contacts/view/layout"
+
+templ View(contact model.Contact) {
+    @layout.Base() {
+    <form action={templ.URL(fmt.Sprintf("/contacts/%d/edit", contact.Id))} method="post">
+        <fieldset>
+            <legend>Contact Values</legend>
+            <div class="table rows">
+                <p>
+                    <label for="email">Email</label>
+                    <input name="email" id="email" type="email"
+                           placeholder="Email" value={ contact.Email }/>
+                    <span class="error">{ contact.Errors["email"] }</span>
+                </p>
+                <p>
+                    <label for="first">First Name</label>
+                    <input name="first" id="first" type="text" placeholder="First Name"
+                           value={ contact.First }/>
+                    <span class="error">{ contact.Errors["First"]}</span>
+                </p>
+                <p>
+                    <label for="last">Last Name</label>
+                    <input name="last" id="last" type="text" placeholder="Last Name"
+                           value={ contact.Last }/>
+                    <span class="error">{ contact.Errors["last"] }</span>
+                </p>
+                <p>
+                    <label for="phone">Phone</label>
+                    <input name="phone" id="phone" type="text" placeholder="Phone" value={ contact.Phone }/>
+                    <span class="error">{contact.Errors["Phone"] }</span>
+                </p>
+            </div>
+            <button>Save</button>
+             <p>
+                <a href="/contacts">Back</a>
+            </p>
+        </fieldset>
+    </form>
+    }
+ 
+}
