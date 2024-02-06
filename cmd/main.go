@@ -71,6 +71,28 @@ func main() {
 		}
 		return c.Redirect(303, "/contacts")
 	})
+
+	app.POST("/contacts/:id/delete", func(c echo.Context) error {
+		contacts := handler.ReadContacts()
+		index := -1
+		var modified []model.Contact
+		for i := 0; i < len(contacts); i++ {
+			if fmt.Sprint(contacts[i].Id) == c.Param("id") {
+				index = i
+			} else {
+				modified = append(modified, contacts[i])
+			}
+		}
+		if index != -1 {
+			newFile, err := json.MarshalIndent(modified, "", "  ")
+			if err != nil {
+				log.Fatal("SHIT")
+			}
+			os.WriteFile("db/contacts.json", newFile, os.ModePerm)
+		}
+		return c.Redirect(303, "/contacts")
+	})
+
 	app.GET("/contacts/new", func(c echo.Context) error {
 		return handler.HandleNewContact(c)
 	})
@@ -89,7 +111,6 @@ func main() {
 
 		newFile, err := json.MarshalIndent(contacts, "", "  ")
 		if err != nil {
-
 			return handler.HandleNewContact(c)
 		}
 		er := os.WriteFile("db/contacts.json", newFile, os.ModePerm)

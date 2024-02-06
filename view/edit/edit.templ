@@ -35,11 +35,15 @@ templ View(contact model.Contact) {
                 </p>
             </div>
             <button>Save</button>
+            
+        </fieldset>
+    </form>
+     <form action={templ.URL(fmt.Sprintf("/contacts/%d/delete", contact.Id))} method="post">
+                <button>Delete Contact</button>
+            </form>
              <p>
                 <a href="/contacts">Back</a>
             </p>
-        </fieldset>
-    </form>
     }
  
 }
