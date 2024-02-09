@@ -4,15 +4,7 @@
     "first": "Carson",
     "last": "Gross",
     "phone": "123-456-7890",
-    "email": "carson@example.comz",
-    "errors": {}
-  },
-  {
-    "id": 5,
-    "first": "Joe",
-    "last": "Blow",
-    "phone": "123-456-7890",
-    "email": "joe@example.com",
+    "email": "carson@example.com",
     "errors": {}
   },
   {
@@ -21,14 +13,6 @@
     "last": "Blow",
     "phone": "123-456-7890",
     "email": "joe1@example.com",
-    "errors": {}
-  },
-  {
-    "id": 7,
-    "first": "Joe",
-    "last": "Blow",
-    "phone": "123-456-7890",
-    "email": "joe2@example.com",
     "errors": {}
   },
   {
@@ -64,14 +48,6 @@
     "errors": {}
   },
   {
-    "id": 12,
-    "first": "Joe",
-    "last": "Blow",
-    "phone": "123-456-7890",
-    "email": "joe7@example.com",
-    "errors": {}
-  },
-  {
     "id": 13,
     "first": "Joe",
     "last": "Blow",
@@ -88,27 +64,27 @@
     "errors": {}
   },
   {
-    "id": 15,
-    "first": "Joe",
-    "last": "Blow",
-    "phone": "123-456-7890",
-    "email": "joe10@example.com",
-    "errors": {}
-  },
-  {
     "id": 16,
-    "first": "Joe",
-    "last": "Blow",
-    "phone": "123-456-7890",
-    "email": "joe11@example.com",
+    "first": "Nice",
+    "last": "Okay",
+    "phone": "666",
+    "email": "Teo@email.co",
     "errors": {}
   },
   {
     "id": 17,
-    "first": "Joe",
-    "last": "Blow",
-    "phone": "123-456-7890",
-    "email": "joe12@example.com",
+    "first": "Te",
+    "last": "Bej",
+    "phone": "420",
+    "email": "somethign@ehllo.com",
+    "errors": {}
+  },
+  {
+    "id": 18,
+    "first": "Teo",
+    "last": "Blixt",
+    "phone": "dont call me",
+    "email": "teo@email.com",
     "errors": {}
   }
 ]
