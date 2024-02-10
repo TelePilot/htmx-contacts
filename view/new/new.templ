@@ -7,7 +7,8 @@ import "fmt"
 templ View(contact model.Contact) {
     <head><title>New contact</title> </head>
     @layout.Base() {
-    <form action={"/contacts/new"} method="post">
+    <button id="fake" hx-get="/contacts/new" hx-target="body">Generate Fake Data</button>
+    <form action="/contacts/new" method="post">
         <fieldset>
             <legend>Contact Values</legend>
             <div class="table rows">

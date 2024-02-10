@@ -3,8 +3,8 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -88,28 +88,29 @@ func (h EditHandler) ValidateDelete(c echo.Context) error {
 			log.Fatal("SHIT")
 		}
 		os.WriteFile("db/contacts.json", newFile, os.ModePerm)
+		if c.Request().Header.Get("HX-targer") == "delete-button" {
+			return c.Redirect(303, "/contacts")
+		}
+		return c.String(200, "")
 	}
-	if c.Request().Header.Get("HX-targer") == "delete-button" {
-		return c.Redirect(303, "/contacts")
-	}
-	return c.String(200, "")
+	return c.String(404, "Not found")
+
 }
 
 func (h EditHandler) BulkDelete(c echo.Context) error {
-	// Why can't delete have/read form data?? don't know
-	// form data *does* exist in the payload
-	defer c.Request().Body.Close()
-	v, err := io.ReadAll(c.Request().Body)
+
+	val, err := c.MultipartForm()
 	if err != nil {
-		fmt.Println(err)
+		return c.Redirect(303, "/contacts?page=1")
+	}
+	if len(val.Value["selected"]) <= 0 {
+		return c.Redirect(303, "/contacts?page=1")
 	}
 	idMap := make(map[int]string)
-	ids := strings.Split(string(v), "&")
-	for _, v := range ids {
-		if i, err := strconv.Atoi(strings.Split(v, "=")[1]); err == nil {
-			idMap[i] = ""
+	for _, v := range val.Value["selected"] {
+		if s, err := strconv.Atoi(v); err == nil {
+			idMap[s] = ""
 		}
-
 	}
 	contacts := ReadContacts()
 
@@ -120,13 +121,13 @@ func (h EditHandler) BulkDelete(c echo.Context) error {
 			modified = append(modified, contacts[i])
 		}
 	}
-	if len(ids) > 0 {
-		newFile, err := json.MarshalIndent(modified, "", "  ")
-		if err != nil {
-			log.Fatal("SHIT")
-		}
-		os.WriteFile("db/contacts.json", newFile, os.ModePerm)
+
+	newFile, err := json.MarshalIndent(modified, "", "  ")
+	if err != nil {
+		log.Fatal("SHIT")
 	}
+	os.WriteFile("db/contacts.json", newFile, os.ModePerm)
+
 	return c.Redirect(303, "/contacts?page=1")
 }
 
@@ -143,6 +144,8 @@ func (h EditHandler) ValidateEmail(c echo.Context) error {
 	return c.String(http.StatusOK, "")
 }
 
+const letters = "abcdefghijklmnopqrstuvwxyz"
+
 func GenerateContactView(c echo.Context, err map[string]string) error {
 	cont := model.Contact{
 		First:  c.FormValue("first"),
@@ -150,6 +153,18 @@ func GenerateContactView(c echo.Context, err map[string]string) error {
 		Phone:  c.FormValue("phone"),
 		Email:  c.FormValue("email"),
 		Errors: err,
+	}
+	if c.Request().Header.Get("HX-trigger") == "fake" {
+
+		b := make([]byte, 4)
+		for i := 0; i < len(b); i++ {
+			b[i] = letters[rand.Intn(len(letters))]
+		}
+		random := string(b)
+		cont.First = random
+		cont.Last = random
+		cont.Phone = random
+		cont.Email = random + "@" + random + "." + random
 	}
 	return render(c, newContact.View(cont))
 }
@@ -182,7 +197,7 @@ func (h EditHandler) ValidateNewContact(c echo.Context) error {
 	if er != nil {
 		return GenerateContactView(c, errs)
 	}
-	return c.Redirect(303, "/contacts")
+	return c.Redirect(303, "/contacts?page=1")
 }
 func (h EditHandler) HandleNewContact(c echo.Context) error {
 	return GenerateContactView(c, map[string]string{})

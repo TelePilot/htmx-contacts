@@ -41,7 +41,7 @@ func paramToInt(param string) int {
 
 
 templ Rows(c echo.Context, contacts []model.Contact) {
-    <form>
+    <form hx-encoding="multipart/form-data">
         <table>
             <thead>
             <tr>
@@ -65,7 +65,7 @@ templ Rows(c echo.Context, contacts []model.Contact) {
                         </td> 
                 </tr>
         }
-        if len(contacts) == 10 * paramToInt(c.QueryParam("page")) {
+        if len(contacts) >= 10 * paramToInt(c.QueryParam("page")) {
                 <tr>
                 <td colspan="5" style="text-align: center">
                     <button hx-target="closest tr" 
@@ -80,7 +80,7 @@ templ Rows(c echo.Context, contacts []model.Contact) {
         }
             </tbody>
         </table>
-           <button id="delete-button" hx-target="body" hx-push-url="true" hx-confirm="Are you sure you want to delete these contacts?" hx-delete="/contacts">Delete Contact</button>
+           <button id="delete-button" hx-target="body" hx-push-url="true" hx-confirm="Are you sure you want to delete these contacts?" hx-post="/contacts/delete">Delete Contact</button>
            </form>
 }
 
