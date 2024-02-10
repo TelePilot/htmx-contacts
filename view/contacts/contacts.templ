@@ -5,6 +5,7 @@ import "github.com/TelePilot/htmx-contacts/model"
 import "fmt"
 import "reflect"
 import "github.com/labstack/echo/v4"
+import "strconv"
 
 templ Contact(contact model.Contact) {
 
@@ -18,7 +19,8 @@ templ Contact(contact model.Contact) {
             </div>
 
             <p>
-            <a href={templ.URL(fmt.Sprintf("/contacts/%d/edit", contact.Id))}>Edit</a>
+            <a
+             href={templ.URL(fmt.Sprintf("/contacts/%d/edit", contact.Id))}>Edit</a>
                 <a href="/contacts">Back</a>
             </p>
         } else {
@@ -30,36 +32,79 @@ templ Contact(contact model.Contact) {
     }
 }
 
+func paramToInt(param string) int {
+    if i, err := strconv.Atoi(param); err == nil {
+        return i
+    }
+    return 0
+}
 
-templ View(q string, c []model.Contact, cont echo.Context) {
-    @layout.Base() {
-        <form action="/contacts" method="get" class="tool-bar">  
-            <label for="search">Search Term</label>
-            <input autofocus autocomplete="off" id="search" type="search" name="q" value={q}/>
-            <input type="submit" value="Search"/>
-        </form>
+
+templ Rows(c echo.Context, contacts []model.Contact) {
+    <form>
         <table>
             <thead>
             <tr>
-                <th>First</th> <th>Last</th> <th>Phone</th> <th>Email</th> <th></th>
+            <th></th><th>First</th> <th>Last</th> <th>Phone</th> <th>Email</th> <th></th>
             </tr>
             </thead>
             <tbody>
-            for _, con := range c {
+            for _, con := range contacts {
                 <tr>
+                    <td><input type="checkbox" name="selected" value={ fmt.Sprint(con.Id) }></input></td>
                     <td>{ con.First }</td>
                     <td>{ con.Last }</td>
                     <td>{ con.Phone }</td>
                     <td>{ con.Email }</td> 
                     <td><a href={templ.URL(fmt.Sprintf("/contacts/%d/edit", con.Id))}>Edit</a>
-                        <a href={templ.URL(fmt.Sprintf("/contacts/%d", con.Id))}>View</a></td> 
+                        <a href={templ.URL(fmt.Sprintf("/contacts/%d", con.Id))}>View</a>
+                        <a href="#" hx-delete={fmt.Sprintf("/contacts/%d", con.Id)}
+                        hx-swap="outerHTML, swap:250ms"
+                        hx-confirm="Are you sure you want to delete this contact?"
+                        hx-target="closest tr">Delete</a> 
+                        </td> 
                 </tr>
+        }
+        if len(contacts) == 10 * paramToInt(c.QueryParam("page")) {
+                <tr>
+                <td colspan="5" style="text-align: center">
+                    <button hx-target="closest tr" 
+
+                            hx-swap="outerHTML"  
+                            hx-select="tbody > tr"
+                            hx-get={fmt.Sprintf("/contacts?page=%d", paramToInt(c.QueryParam("page")) +1)}>
+                      Load More
+                    </button>
+                </td>
+            </tr>
         }
             </tbody>
         </table>
+           <button id="delete-button" hx-target="body" hx-push-url="true" hx-confirm="Are you sure you want to delete these contacts?" hx-delete="/contacts">Delete Contact</button>
+           </form>
+}
+
+templ View(c echo.Context, contacts []model.Contact) {
+    @layout.Base() {
+        <form action="/contacts?page=1" method="get" class="tool-bar">  
+            <label for="search">Search Term</label>
+            <input
+            hx-get="/contacts?page=1"
+            hx-trigger="search, keyup delay:200ms changed"
+            hx-target="tbody"
+            hx-select="tbody tr"
+             hx-push-url="true"
+             hx-indicator="#spinner"
+             autofocus autocomplete="off" id="search" type="search" name="q" value={c.Param("q")}/>
+            <input type="submit" value="Search"/>
+        </form>
+        <span id="spinner" class="htmx-indicator">spinning </span>
+        @Rows(c, contacts)
+        
+        <div>
+</div>
         <p>
-         <a href="/contacts/new">Add Contact</a> 
+         <a href="/contacts/new">Add Contact</a> <span hx-get="/contacts/count" hx-trigger="revealed">Loading...</span>
         </p>
     }
-   
 }

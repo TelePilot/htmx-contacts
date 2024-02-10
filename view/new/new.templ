@@ -11,38 +11,47 @@ templ View(contact model.Contact) {
         <fieldset>
             <legend>Contact Values</legend>
             <div class="table rows">
-                <p>
+                <div>
                     <label for="email">Email</label>
+                    <div>
                     <input name="email" id="email" type="email" value={contact.Email}
                            placeholder="Email"
                             hx-get={fmt.Sprintf("/contacts/%d/email", contact.Id)} 
                             hx-target="next" 
+                            hx-trigger="change, keyup delay:200ms"
+                           
                            />
                               <span class="error">{ contact.Errors["email"] }</span>
-
-                </p>
-                <p>
+                    </div>
+                </div>
+                <div>
                     <label for="first">First Name</label>
+                    <div>
                     <input name="first" id="first" type="text" placeholder="First Name" value={ contact.First }
                            />
                             <span class="error">{ contact.Errors["First"]}</span>
-                </p>
-                <p>
+                            </div>
+                </div>
+                <div>
                     <label for="last">Last Name</label>
+                    <div>
                     <input name="last" id="last" type="text" placeholder="Last Name"   value={ contact.Last }
                            />
                               <span class="error">{ contact.Errors["last"] }</span>
-                </p>
-                <p>
+                              </div>
+                </div>
+                <div>
                     <label for="phone">Phone</label>
+                    <div>
                     <input name="phone" id="phone" type="text" placeholder="Phone"  value={ contact.Phone } />
                              <span class="error">{contact.Errors["Phone"] }</span>
-                </p>
+                             </div>
+                </div>
             </div>
             <button>Save</button>
-             <p>
+             <div>
                 <a href="/contacts">Back</a>
-            </p>
+            </div>
         </fieldset>
     </form>
     }

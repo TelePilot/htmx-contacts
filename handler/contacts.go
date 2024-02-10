@@ -12,13 +12,15 @@ type ContactHandler struct{}
 
 func (h ContactHandler) HandleUserShow(c echo.Context) error {
 	con := GenerateContacts(c)
-	query := c.QueryParam("q")
-	val := ""
-	if len(query) >= 0 {
-		val = query
-	}
 
-	return render(c, contacts.View(val, con, c))
+	if c.Request().Header.Get("HX-trigger") == "search" {
+		return render(c, contacts.Rows(c, con))
+	}
+	return render(c, contacts.View(c, con))
+}
+func (h ContactHandler) ContactTotal(c echo.Context) error {
+	contacts := ReadContacts()
+	return c.String(200, "("+fmt.Sprint(len(contacts))+" total contacts)")
 }
 
 func (h ContactHandler) HandleSingleContact(c echo.Context) error {

@@ -15,6 +15,8 @@ func main() {
 	editHandler := handler.EditHandler{}
 	app.GET("/", redirectHandler.HandleRedirect)
 	app.GET("/contacts", contactHandler.HandleUserShow)
+	app.DELETE("/contacts", editHandler.BulkDelete)
+	app.GET("/contacts/count", contactHandler.ContactTotal)
 
 	app.GET("/contacts/:id", contactHandler.HandleSingleContact)
 	app.DELETE("/contacts/:id", editHandler.ValidateDelete)

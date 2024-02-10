@@ -3,9 +3,11 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/TelePilot/htmx-contacts/model"
@@ -29,6 +31,7 @@ func (h EditHandler) EditContact(c echo.Context) error {
 }
 
 func (h EditHandler) ValidateEdit(c echo.Context) error {
+	fmt.Println("hello")
 	contacts := ReadContacts()
 	index := -1
 	for i := 0; i < len(contacts); i++ {
@@ -40,6 +43,9 @@ func (h EditHandler) ValidateEdit(c echo.Context) error {
 	if index != -1 {
 		errs := make(map[string]string)
 		for _, v := range contacts {
+			if fmt.Sprint(v.Id) == c.Param("id") {
+				continue
+			}
 			if c.FormValue("email") == v.Email {
 				errs["email"] = "email must be unique"
 				return h.EditContact(c)
@@ -61,6 +67,7 @@ func (h EditHandler) ValidateEdit(c echo.Context) error {
 		}
 		os.WriteFile("db/contacts.json", newFile, os.ModePerm)
 	}
+	fmt.Println("hello")
 	return c.Redirect(303, "/contacts")
 }
 
@@ -82,12 +89,53 @@ func (h EditHandler) ValidateDelete(c echo.Context) error {
 		}
 		os.WriteFile("db/contacts.json", newFile, os.ModePerm)
 	}
-	return c.Redirect(303, "/contacts")
+	if c.Request().Header.Get("HX-targer") == "delete-button" {
+		return c.Redirect(303, "/contacts")
+	}
+	return c.String(200, "")
+}
+
+func (h EditHandler) BulkDelete(c echo.Context) error {
+	// Why can't delete have/read form data?? don't know
+	// form data *does* exist in the payload
+	defer c.Request().Body.Close()
+	v, err := io.ReadAll(c.Request().Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	idMap := make(map[int]string)
+	ids := strings.Split(string(v), "&")
+	for _, v := range ids {
+		if i, err := strconv.Atoi(strings.Split(v, "=")[1]); err == nil {
+			idMap[i] = ""
+		}
+
+	}
+	contacts := ReadContacts()
+
+	var modified []model.Contact
+	for i := 0; i < len(contacts); i++ {
+		_, ok := idMap[contacts[i].Id]
+		if !ok {
+			modified = append(modified, contacts[i])
+		}
+	}
+	if len(ids) > 0 {
+		newFile, err := json.MarshalIndent(modified, "", "  ")
+		if err != nil {
+			log.Fatal("SHIT")
+		}
+		os.WriteFile("db/contacts.json", newFile, os.ModePerm)
+	}
+	return c.Redirect(303, "/contacts?page=1")
 }
 
 func (h EditHandler) ValidateEmail(c echo.Context) error {
 	contacts := ReadContacts()
 	for _, v := range contacts {
+		if fmt.Sprint(v.Id) == c.Param("id") {
+			continue
+		}
 		if strings.EqualFold(c.FormValue("email"), v.Email) {
 			return c.String(http.StatusOK, "email must be unique")
 		}

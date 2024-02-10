@@ -2,10 +2,12 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/TelePilot/htmx-contacts/model"
@@ -20,28 +22,42 @@ func render(c echo.Context, component templ.Component) error {
 type RedirectHandler struct{}
 
 func (h RedirectHandler) HandleRedirect(c echo.Context) error {
-	return c.Redirect(303, "/contacts")
+	return c.Redirect(303, "/contacts?page=1")
 }
 
 func GenerateContacts(context echo.Context) []model.Contact {
 	query := context.QueryParam("q")
+	p := context.QueryParam("page")
+	page := 1
+	if pN, err := strconv.Atoi(p); err == nil {
+		page = pN
+	}
 	val := ""
 	if len(query) >= 0 {
 		val = strings.ToUpper(query)
 	}
 	c := ReadContacts()
+
 	var s []model.Contact
 	for _, v := range c {
 		values := reflect.ValueOf(v)
 		for i := 0; i < values.NumField(); i++ {
-			if strings.Contains(strings.ToUpper(values.Field(i).String()), val) {
+			if values.Field(i).Kind().String() != "string" {
+				continue
+			}
+			fieldVal := fmt.Sprint(values.Field(i))
+			if strings.Contains(strings.ToUpper(fieldVal), val) {
 				s = append(s, v)
 				break
 			}
 		}
 	}
-
-	return s
+	max := len(s)
+	if page*10 < max {
+		max = page * 10
+	}
+	cont := s[10*(page-1) : max]
+	return cont
 }
 
 func ReadContacts() []model.Contact {

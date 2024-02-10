@@ -17,6 +17,14 @@ table {
   margin-bottom: 12px;
 }
 
+.rows > div {
+  display: flex;
+  justify-content: flex-start;
+  flex-flow: column;
+}
+.rows > div input {
+  min-width: 350px;
+}
 .error {
   display: inline-block;
   color: darkred;
@@ -24,7 +32,7 @@ table {
 
 tr.htmx-swapping {
   opacity: 0;
-  transition: opacity 1s ease-out;
+  transition: opacity 250ms ease-out;
 }
 
 td {
