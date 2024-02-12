@@ -7,7 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
-	"strconv"
+	"slices"
 	"strings"
 
 	"github.com/TelePilot/htmx-contacts/model"
@@ -97,31 +97,24 @@ func (h EditHandler) ValidateDelete(c echo.Context) error {
 
 }
 
-func (h EditHandler) BulkDelete(c echo.Context) error {
+type selectedContactIDs struct {
+	SelectedContactIDs []int `form:"selected"`
+}
 
-	val, err := c.MultipartForm()
-	if err != nil {
-		return c.Redirect(303, "/contacts?page=1")
-	}
-	if len(val.Value["selected"]) <= 0 {
-		return c.Redirect(303, "/contacts?page=1")
-	}
-	idMap := make(map[int]string)
-	for _, v := range val.Value["selected"] {
-		if s, err := strconv.Atoi(v); err == nil {
-			idMap[s] = ""
-		}
+func (h EditHandler) BulkDelete(c echo.Context) error {
+	payload := new(selectedContactIDs)
+	if err := c.Bind(payload); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid payload")
 	}
 	contacts := ReadContacts()
-
-	var modified []model.Contact
-	for i := 0; i < len(contacts); i++ {
-		_, ok := idMap[contacts[i].Id]
-		if !ok {
-			modified = append(modified, contacts[i])
+	modified := slices.DeleteFunc(contacts, func(c model.Contact) bool {
+		for _, v := range payload.SelectedContactIDs {
+			if c.Id == v {
+				return true
+			}
 		}
-	}
-
+		return false
+	})
 	newFile, err := json.MarshalIndent(modified, "", "  ")
 	if err != nil {
 		log.Fatal("SHIT")

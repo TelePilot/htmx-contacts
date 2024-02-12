@@ -8,27 +8,11 @@
     "errors": {}
   },
   {
-    "id": 10,
-    "first": "Joe",
-    "last": "Blow",
-    "phone": "123-456-7890",
-    "email": "joe5@example.com",
-    "errors": {}
-  },
-  {
     "id": 11,
     "first": "Joe",
     "last": "Blow",
     "phone": "123-456-7890",
     "email": "joe6@example.com",
-    "errors": {}
-  },
-  {
-    "id": 14,
-    "first": "Joe",
-    "last": "Blow",
-    "phone": "123-456-7890",
-    "email": "joe9@example.com",
     "errors": {}
   },
   {
@@ -40,83 +24,11 @@
     "errors": {}
   },
   {
-    "id": 19,
-    "first": "teo",
-    "last": "Bluxt",
-    "phone": "42069",
-    "email": "teo@email.com2",
-    "errors": {}
-  },
-  {
     "id": 21,
     "first": "sf",
     "last": "sf",
     "phone": "sf",
     "email": "fff@nice.com",
-    "errors": {}
-  },
-  {
-    "id": 22,
-    "first": "asdd",
-    "last": "asdddd",
-    "phone": "ddddd",
-    "email": "dfff@fdfe.cdff",
-    "errors": {}
-  },
-  {
-    "id": 23,
-    "first": "zrye",
-    "last": "zrye",
-    "phone": "zrye",
-    "email": "zrye@zrye.zrye",
-    "errors": {}
-  },
-  {
-    "id": 24,
-    "first": "brbm",
-    "last": "brbm",
-    "phone": "brbm",
-    "email": "brbm@brbm.brbm",
-    "errors": {}
-  },
-  {
-    "id": 25,
-    "first": "imzh",
-    "last": "imzh",
-    "phone": "imzh",
-    "email": "imzh@imzh.imzh",
-    "errors": {}
-  },
-  {
-    "id": 26,
-    "first": "xiax",
-    "last": "xiax",
-    "phone": "xiax",
-    "email": "xiax@xiax.xiax",
-    "errors": {}
-  },
-  {
-    "id": 27,
-    "first": "jswf",
-    "last": "jswf",
-    "phone": "jswf",
-    "email": "jswf@jswf.jswf",
-    "errors": {}
-  },
-  {
-    "id": 28,
-    "first": "ibhz",
-    "last": "ibhz",
-    "phone": "ibhz",
-    "email": "ibhz@ibhz.ibhz",
-    "errors": {}
-  },
-  {
-    "id": 29,
-    "first": "byem",
-    "last": "byem",
-    "phone": "byem",
-    "email": "byem@byem.byem",
     "errors": {}
   }
 ]
